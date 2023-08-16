@@ -1,6 +1,6 @@
 # Image smoothing and Edge Detection in R
 
-## Implementing a parallel mean filter for image smoothing
+## Implement a parallel mean filter for image smoothing
 
 ### Function to implement parallel mean filter
 
@@ -45,6 +45,38 @@ mean_filter = function(X, k)
   return(mean.X)
 }
 ```
+### Testing function for matrix provided in example
+```r
+## Example matrix from https://pages.stat.wisc.edu/~jgillett/305/3/hw3.html 
+X = matrix(c(.5,.5,.4,.4,.3,.5,.5,.4,.3,.3,.4,.4,.3,.2,.2,.4,.4,.3,.2,.1,.3,.3,.2,.2,.1), ncol=5)
+
+## image() for original matrix X
+image(t(X[nrow(X):1,]), 
+      main = "Raw Image")
+```
+
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Raw_image.png" width="500" height="250">
+
+```r
+## Applying parallel mean filter
+mean.X = mean_filter(X = X, k = 1)
+mean.X
+```
+
+    ##           [,1]      [,2]      [,3]      [,4]       [,5]
+    ## [1,] 0.2222222 0.3111111 0.2888889 0.2444444 0.15555556
+    ## [2,] 0.3111111 0.4333333 0.4000000 0.3333333 0.21111111
+    ## [3,] 0.2777778 0.3777778 0.3333333 0.2777778 0.17777778
+    ## [4,] 0.2333333 0.3111111 0.2555556 0.2000000 0.12222222
+    ## [5,] 0.1444444 0.1888889 0.1444444 0.1111111 0.06666667
+
+```r
+## image() for mean filtered matrix X
+image(t(mean.X[nrow(mean.X):1,]), 
+      main = "Mean Filtered Image (k = 1)")
+```
+
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/mean_filter(k%3D1).png" width="500" height="250">
 
 ### Loading and running RGB values of Van Gogh image
 
@@ -53,13 +85,9 @@ mean_filter = function(X, k)
 require(png)
 str(vg <- readPNG("Van_Gogh.png"))
 ```
-
     ##  num [1:374, 1:800, 1:3] 0.1255 0.3647 0.3059 0.1098 0.0235 ...
 
-<figure>
-<img src="Van_Gogh.png" alt="Original Van Gogh Image" />
-<figcaption aria-hidden="true">Original Van Gogh Image</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Van_Gogh.png" width="500" height="250">
 
 ``` r
 ## Seperating RGB values
@@ -83,8 +111,7 @@ image(t(blue.vg[nrow(blue.vg):1,]),
       col = gray((1:12)/13), 
       main="Blue channel")
 ```
-
-![](Image-smoothing-and-Edge-Detection_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Van_Gogh_RGB.png" width="500" height="250">
 
 ### Implementing Parallel Mean Filter For Van Gogh Image
 
@@ -102,12 +129,7 @@ writePNG(image = png_1,
          target = 'ssudhir_1.png')
 ```
 
-<figure>
-<img src="ssudhir_1.png"
-alt="k = 1 parallel mean filter Van Gogh Image" />
-<figcaption aria-hidden="true">k = 1 parallel mean filter Van Gogh
-Image</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/ssudhir_1.png" width="500" height="250">
 
 #### For k = 3
 
@@ -123,12 +145,7 @@ writePNG(image = png_3,
          target = 'ssudhir_3.png')
 ```
 
-<figure>
-<img src="ssudhir_3.png"
-alt="k = 3 parallel mean filter Van Gogh Image" />
-<figcaption aria-hidden="true">k = 3 parallel mean filter Van Gogh
-Image</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/ssudhir_3.png" width="500" height="250">
 
 #### For k = 5
 
@@ -144,12 +161,7 @@ writePNG(image = png_5,
          target = 'ssudhir_5.png')
 ```
 
-<figure>
-<img src="ssudhir_5.png"
-alt="k = 5 parallel mean filter Van Gogh Image" />
-<figcaption aria-hidden="true">k = 5 parallel mean filter Van Gogh
-Image</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/ssudhir_5.png" width="500" height="250">
 
 ### Explanation
 
@@ -163,12 +175,12 @@ smaller and smaller. This results in the RGB values (pixels) getting
 diffused and merging into each other, which causes our image to get more
 blurry with each subsequent k.
 
-**Note:** for an arbitrary integer k, our window is -k, -k+1, …, 0, …,
-k-1, k with 0 at our non-padded value in each direction, i.e.,
-(2k+1)-by-(2k+1) matrix. Therefore, for k = 1, our window is a 3-by-3
-matrix (-1,0,1). For k = 3, our window is a 7-by-7 matrix
-(-3,-2,-1,0,1,2,3). Finally, for k = 5, our window is a 11-by-11 matrix
-(-5,-4,-3,-2,-1,0,1,2,3,4,5).
+**Note:** for an arbitrary integer k, our window is $[-k, -k+1, …, 0, …,
+k-1, k]$ with $0$ at our non-padded value in each direction, i.e.,
+(2k+1)-by-(2k+1) matrix. Therefore, for $k=1$, our window is a 3-by-3
+matrix $(-1,0,1)$. For $k = 3$, our window is a 7-by-7 matrix
+$[-3,-2,-1,0,1,2,3]$. Finally, for $k = 5$, our window is a 11-by-11 matrix
+$[-5,-4,-3,-2,-1,0,1,2,3,4,5]$.
 
 ## Implementing Edge Detection
 
@@ -238,17 +250,6 @@ edge_detection = function(X, k)
 ### Testing function for matrix provided in example
 
 ``` r
-## Example matrix from https://pages.stat.wisc.edu/~jgillett/305/3/hw3.html 
-X = matrix(c(.5,.5,.4,.4,.3,.5,.5,.4,.3,.3,.4,.4,.3,.2,.2,.4,.4,.3,.2,.1,.3,.3,.2,.2,.1), ncol=5)
-
-## image() for original matrix X
-image(t(X[nrow(X):1,]), 
-      main = "Raw Image")
-```
-
-![](Image-smoothing-and-Edge-Detection_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-``` r
 ## Applying parallel mean filter
 sd.X = edge_detection(X = X, k = 1)
 sd.X
@@ -267,43 +268,10 @@ image(t(sd.X[nrow(sd.X):1,]),
       main = "Edge Detection Image (k = 1)")
 ```
 
-![](Image-smoothing-and-Edge-Detection_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Loading and running RGB values of Van Gogh image
 
-``` r
-## Loading Van_Gogh.png
-require(png)
-str(vg <- readPNG("Van_Gogh.png"))
-```
-
-    ##  num [1:374, 1:800, 1:3] 0.1255 0.3647 0.3059 0.1098 0.0235 ...
-
-<figure>
-<img src="Van_Gogh.png" alt="Original Van Gogh Image" />
-<figcaption aria-hidden="true">Original Van Gogh Image</figcaption>
-</figure>
-
-``` r
-red.vg <- vg[,,1] # R values
-green.vg <- vg[,,2] # G values
-blue.vg <- vg[,,3] # B values
-layout(matrix(1:3, ncol=3))
-
-image(t(red.vg[nrow(red.vg):1, ]), 
-      col = gray((1:12)/13), 
-      main="Red channel")
-
-image(t(green.vg[nrow(green.vg):1, ]), 
-      col = gray((1:12)/13), 
-      main="Green channel")
-
-image(t(blue.vg[nrow(blue.vg):1, ]), 
-      col = gray((1:12)/13), 
-      main="Blue channel")
-```
-
-![](Image-smoothing-and-Edge-Detection_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Edge_detect.png" width="500" height="250">
 
 ### Implementing Edge Detection in Van Gogh
 
@@ -319,10 +287,7 @@ writePNG(image = png.van,
          target = 'ssudhir_Van_Gogh.png')
 ```
 
-<figure>
-<img src="ssudhir_Van_Gogh.png" alt="Edge Detection for Van Gogh" />
-<figcaption aria-hidden="true">Edge Detection for Van Gogh</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/ssudhir_Van_Gogh.png" width="500" height="250">
 
 ### Loading and running RGB values of Madison
 
@@ -334,10 +299,7 @@ str(vg <- readPNG("Madison.png"))
 
     ##  num [1:600, 1:600, 1:3] 0.235 0.267 0.251 0.267 0.349 ...
 
-<figure>
-<img src="Madison.png" alt="Original Madison Image" />
-<figcaption aria-hidden="true">Original Madison Image</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Madison.png" width="500" height="250">
 
 ``` r
 ## Seperating RGB values
@@ -362,7 +324,7 @@ image(t(blue.vg[nrow(blue.vg):1, ]),
       main="Blue channel")
 ```
 
-![](Image-smoothing-and-Edge-Detection_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/Madison_RGB.png" width="500" height="250">
 
 ### Implementing Edge Detection for Madison
 
@@ -378,10 +340,7 @@ writePNG(image = png.mad,
          target = 'ssudhir_madison.png')
 ```
 
-<figure>
-<img src="ssudhir_madison.png" alt="Edge Detection for Madison" />
-<figcaption aria-hidden="true">Edge Detection for Madison</figcaption>
-</figure>
+<img src="https://github.com/Stochastic1017/Image-filtering-in-R/blob/main/Images/ssudhir_madison.png" width="500" height="250">
 
 ### Explanation
 
@@ -400,7 +359,7 @@ buildings that are closely packed to each other, due to which the edge
 detector occasionally leaks and detects edges that are not necessarily
 there.
 
-**Note:** for an arbitrary integer k, our window is -k, -k+1, …, 0, …,
-k-1, k with 0 at our non-padded value in each direction, i.e.,
-(2k+1)-by-(2k+1) matrix. As we only consider k = 1, our window is a
-3-by-3 matrix (-1,0,1).
+**Note:** for an arbitrary integer k, our window is $[-k, -k+1, …, 0, …,
+k-1, k]$ with $0$ at our non-padded value in each direction, i.e.,
+(2k+1)-by-(2k+1) matrix. As we only consider $k = 1$, our window is a
+3-by-3 matrix $[-1,0,1]$.
